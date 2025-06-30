@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Github, Star, GitFork, Users, Calendar, MapPin, Link as LinkIcon, ExternalLink, Loader2, Search, Code2, Terminal, Zap } from 'lucide-react';
+import { Github, Star, GitFork, Users, Calendar, MapPin, Link as LinkIcon, ExternalLink, Loader2, Search, Code2, Building } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 const Index = () => {
@@ -16,8 +16,8 @@ const Index = () => {
   const handleSearch = async () => {
     if (!username.trim()) {
       toast({
-        title: "Missing Username",
-        description: "Please type in a GitHub username.",
+        title: "Username required",
+        description: "Please enter a GitHub username to search.",
         variant: "destructive"
       });
       return;
@@ -31,8 +31,8 @@ const Index = () => {
       if (profileResponse.ok) {
         setProfile(profileData);
         toast({
-          title: "User Loaded",
-          description: `${profileData.name || profileData.login}'s profile loaded.`
+          title: "Profile loaded",
+          description: `Found ${profileData.name || profileData.login}'s GitHub profile.`
         });
 
         const reposResponse = await fetch(`http://localhost:5000/github/repos/${username}`);
@@ -47,16 +47,16 @@ const Index = () => {
         setProfile(null);
         setRepositories([]);
         toast({
-          title: "User Not Found",
-          description: "That GitHub user doesn't exist.",
+          title: "User not found",
+          description: "No GitHub user found with that username.",
           variant: "destructive"
         });
       }
     } catch (error) {
-      console.error('Error contacting backend:', error);
+      console.error('API Error:', error);
       toast({
-        title: "Server Error",
-        description: "Couldn't fetch data. Is your backend running?",
+        title: "Connection error",
+        description: "Unable to connect to the server. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -64,61 +64,64 @@ const Index = () => {
     }
   };
 
-  const formatDate = (date) => new Date(date).toLocaleDateString('en-IN');
+  const formatDate = (date) => new Date(date).toLocaleDateString('en-US', { 
+    year: 'numeric', 
+    month: 'long' 
+  });
 
   const openRepository = (url) => window.open(url, '_blank');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-10">
+      <header className="border-b border-gray-200 bg-white sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
                 <Github className="w-5 h-5 text-white" />
               </div>
-              <h1 className="text-2xl font-bold text-slate-900">DevLookup</h1>
+              <h1 className="text-xl font-semibold text-gray-900">DevLookup</h1>
             </div>
-            <div className="text-sm text-slate-600">
+            <div className="text-sm text-gray-500">
               Explore GitHub profiles & repositories
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 py-8">
+      <main className="max-w-6xl mx-auto px-6 py-12">
         {/* Search Section */}
-        <div className="mb-12">
-          <div className="text-center mb-8">
-            <h2 className="text-4xl font-bold text-slate-900 mb-3">
-              Find any developer
+        <div className="mb-16">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Discover developers
             </h2>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              Search GitHub profiles, explore repositories, and discover what developers are building
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Search for any GitHub user to explore their profile, repositories, and contribution history
             </p>
           </div>
           
-          <div className="max-w-md mx-auto">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+          <div className="max-w-lg mx-auto">
+            <div className="relative mb-4">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <Input
                 type="text"
-                placeholder="Enter GitHub username"
+                placeholder="Enter GitHub username (e.g., octocat)"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                className="pl-11 h-12 text-lg border-slate-300 focus:border-slate-500 focus:ring-slate-500"
+                className="pl-12 h-12 text-base border-gray-300 focus:border-gray-400 focus:ring-gray-400"
               />
             </div>
             <Button 
               onClick={handleSearch} 
               disabled={loading}
-              className="w-full mt-4 h-12 text-lg bg-slate-900 hover:bg-slate-800"
+              className="w-full h-12 text-base bg-gray-900 hover:bg-gray-800"
             >
               {loading ? (
                 <>
-                  <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
                   Searching...
                 </>
               ) : (
@@ -130,33 +133,33 @@ const Index = () => {
 
         {/* Profile Section */}
         {profile && (
-          <div className="mb-12">
-            <Card className="border-slate-200 shadow-sm">
+          <div className="mb-16">
+            <Card className="border-gray-200 shadow-sm">
               <CardHeader className="pb-6">
                 <div className="flex flex-col md:flex-row gap-6">
                   <div className="flex-shrink-0">
                     <img 
                       src={profile.avatar_url} 
-                      alt="Profile" 
-                      className="w-24 h-24 rounded-xl border-2 border-slate-200" 
+                      alt={`${profile.login}'s avatar`}
+                      className="w-24 h-24 rounded-2xl border border-gray-200" 
                     />
                   </div>
                   <div className="flex-grow">
                     <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-4">
                       <div>
-                        <CardTitle className="text-2xl text-slate-900 mb-1">
+                        <CardTitle className="text-2xl text-gray-900 mb-1">
                           {profile.name || profile.login}
                         </CardTitle>
-                        <CardDescription className="text-lg">
+                        <CardDescription className="text-lg text-gray-600">
                           @{profile.login}
                         </CardDescription>
                       </div>
                       <div className="flex gap-2 mt-4 md:mt-0">
-                        <Badge variant="secondary" className="bg-slate-100 text-slate-700">
+                        <Badge variant="secondary" className="bg-gray-100 text-gray-700 border-gray-200">
                           <Users className="w-3 h-3 mr-1" />
-                          {profile.followers} followers
+                          {profile.followers.toLocaleString()} followers
                         </Badge>
-                        <Badge variant="secondary" className="bg-slate-100 text-slate-700">
+                        <Badge variant="secondary" className="bg-gray-100 text-gray-700 border-gray-200">
                           <Github className="w-3 h-3 mr-1" />
                           {profile.public_repos} repos
                         </Badge>
@@ -164,12 +167,18 @@ const Index = () => {
                     </div>
                     
                     {profile.bio && (
-                      <p className="text-slate-700 mb-4 text-lg leading-relaxed">
+                      <p className="text-gray-700 mb-6 text-base leading-relaxed">
                         {profile.bio}
                       </p>
                     )}
                     
-                    <div className="flex flex-wrap gap-4 text-slate-600">
+                    <div className="flex flex-wrap gap-6 text-gray-600">
+                      {profile.company && (
+                        <div className="flex items-center gap-2">
+                          <Building className="w-4 h-4" />
+                          <span>{profile.company}</span>
+                        </div>
+                      )}
                       {profile.location && (
                         <div className="flex items-center gap-2">
                           <MapPin className="w-4 h-4" />
@@ -180,7 +189,7 @@ const Index = () => {
                         <div className="flex items-center gap-2">
                           <LinkIcon className="w-4 h-4" />
                           <a 
-                            href={profile.blog} 
+                            href={profile.blog.startsWith('http') ? profile.blog : `https://${profile.blog}`}
                             target="_blank" 
                             rel="noreferrer" 
                             className="text-blue-600 hover:text-blue-800 hover:underline"
@@ -204,54 +213,54 @@ const Index = () => {
         {/* Repositories Section */}
         {repositories.length > 0 && (
           <div>
-            <div className="flex items-center gap-3 mb-6">
-              <Code2 className="w-6 h-6 text-slate-700" />
-              <h3 className="text-2xl font-bold text-slate-900">
-                Recent Repositories
+            <div className="flex items-center gap-3 mb-8">
+              <Code2 className="w-6 h-6 text-gray-700" />
+              <h3 className="text-2xl font-bold text-gray-900">
+                Popular Repositories
               </h3>
-              <Badge className="bg-slate-100 text-slate-700 border-slate-300">
+              <Badge className="bg-gray-100 text-gray-700 border-gray-300">
                 {repositories.length}
               </Badge>
             </div>
             
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {repositories.map((repo) => (
                 <Card 
                   key={repo.id} 
-                  className="border-slate-200 hover:shadow-md hover:border-slate-300 transition-all duration-200 cursor-pointer group"
+                  className="border-gray-200 hover:shadow-md hover:border-gray-300 transition-all duration-200 cursor-pointer group"
                   onClick={() => openRepository(repo.html_url)}
                 >
-                  <CardHeader className="pb-3">
+                  <CardHeader className="pb-4">
                     <div className="flex items-start justify-between">
-                      <CardTitle className="text-lg text-slate-900 group-hover:text-blue-600 transition-colors">
+                      <CardTitle className="text-lg text-gray-900 group-hover:text-blue-600 transition-colors leading-snug">
                         {repo.name}
                       </CardTitle>
-                      <ExternalLink className="w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <ExternalLink className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                     </div>
-                    <CardDescription className="text-slate-600 line-clamp-2">
+                    <CardDescription className="text-gray-600 line-clamp-3 leading-relaxed">
                       {repo.description || 'No description available'}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <div className="flex items-center justify-between text-sm text-slate-500">
+                    <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-1">
                           <Star className="w-4 h-4" />
-                          <span>{repo.stargazers_count}</span>
+                          <span>{repo.stargazers_count.toLocaleString()}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <GitFork className="w-4 h-4" />
-                          <span>{repo.forks_count}</span>
+                          <span>{repo.forks_count.toLocaleString()}</span>
                         </div>
                       </div>
                       <span className="text-xs">
-                        {formatDate(repo.updated_at)}
+                        Updated {formatDate(repo.updated_at)}
                       </span>
                     </div>
                     {repo.language && (
                       <Badge 
                         variant="outline" 
-                        className="mt-3 text-xs border-slate-300 text-slate-600"
+                        className="text-xs border-gray-300 text-gray-600"
                       >
                         {repo.language}
                       </Badge>
@@ -265,16 +274,16 @@ const Index = () => {
 
         {/* Empty State */}
         {!profile && !loading && (
-          <div className="text-center py-16">
+          <div className="text-center py-20">
             <div className="max-w-md mx-auto">
-              <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Terminal className="w-8 h-8 text-slate-600" />
+              <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <Github className="w-8 h-8 text-gray-400" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">
-                Ready to explore
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                Start exploring
               </h3>
-              <p className="text-slate-600">
-                Enter a GitHub username above to view their profile and repositories
+              <p className="text-gray-600 leading-relaxed">
+                Enter a GitHub username above to discover their profile, repositories, and development activity
               </p>
             </div>
           </div>
@@ -282,12 +291,12 @@ const Index = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t bg-white mt-16">
+      <footer className="border-t border-gray-200 bg-gray-50 mt-20">
         <div className="max-w-6xl mx-auto px-6 py-8">
-          <div className="flex items-center justify-between text-sm text-slate-600">
+          <div className="flex items-center justify-between text-sm text-gray-600">
             <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4" />
-              <span>Built for developers, by developers</span>
+              <Github className="w-4 h-4" />
+              <span>Built for the developer community</span>
             </div>
             <div>
               Powered by GitHub API

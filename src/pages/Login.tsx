@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Github, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Github, Eye, EyeOff, ArrowLeft, AlertCircle } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 
@@ -20,8 +20,8 @@ const Login = () => {
     
     if (!email || !password) {
       toast({
-        title: "Missing Information",
-        description: "Please fill in all fields.",
+        title: "Please fill in all fields",
+        description: "Both email and password are required to sign in.",
         variant: "destructive"
       });
       return;
@@ -29,44 +29,41 @@ const Login = () => {
 
     setLoading(true);
     
-    // Simulate login process
+    // Simulate authentication
     setTimeout(() => {
       toast({
         title: "Welcome back!",
-        description: "Successfully logged in.",
+        description: "You've been successfully signed in.",
       });
       navigate('/app');
       setLoading(false);
-    }, 1500);
+    }, 1200);
   };
 
   const handleGitHubLogin = () => {
     toast({
-      title: "GitHub Login",
-      description: "Redirecting to GitHub authentication...",
+      title: "GitHub OAuth",
+      description: "Redirecting to GitHub for authentication...",
     });
-    // In a real app, this would redirect to GitHub OAuth
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-pink-600/10"></div>
-      
-      <div className="relative w-full max-w-md">
-        <Link to="/" className="inline-flex items-center text-slate-400 hover:text-white mb-8 transition-colors">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <Link to="/" className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-8 transition-colors">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to home
         </Link>
         
-        <Card className="bg-slate-800 border-slate-700 shadow-xl">
-          <CardHeader className="text-center space-y-4">
-            <div className="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center mx-auto">
-              <Github className="w-8 h-8 text-white" />
+        <Card className="bg-white shadow-sm border border-gray-200">
+          <CardHeader className="text-center space-y-4 pb-8">
+            <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mx-auto">
+              <Github className="w-6 h-6 text-white" />
             </div>
             <div>
-              <CardTitle className="text-2xl text-white">Welcome back</CardTitle>
-              <CardDescription className="text-slate-400 text-base">
-                Sign in to your DevLookup account
+              <CardTitle className="text-2xl font-bold text-gray-900">Sign in to DevLookup</CardTitle>
+              <CardDescription className="text-gray-600 mt-2">
+                Welcome back! Please enter your details.
               </CardDescription>
             </div>
           </CardHeader>
@@ -74,19 +71,19 @@ const Login = () => {
           <CardContent className="space-y-6">
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-slate-300">Email</Label>
+                <Label htmlFor="email" className="text-gray-700 font-medium">Email</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 focus:border-blue-500"
+                  className="h-11 border-gray-300 focus:border-gray-400 focus:ring-gray-400"
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-slate-300">Password</Label>
+                <Label htmlFor="password" className="text-gray-700 font-medium">Password</Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -94,21 +91,29 @@ const Login = () => {
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 focus:border-blue-500 pr-10"
+                    className="h-11 border-gray-300 focus:border-gray-400 focus:ring-gray-400 pr-10"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-white"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
               
+              <div className="flex items-center justify-between">
+                <div className="text-sm">
+                  <a href="#" className="text-gray-600 hover:text-gray-900">
+                    Forgot your password?
+                  </a>
+                </div>
+              </div>
+              
               <Button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3"
+                className="w-full bg-gray-900 hover:bg-gray-800 text-white h-11"
                 disabled={loading}
               >
                 {loading ? "Signing in..." : "Sign in"}
@@ -117,31 +122,31 @@ const Login = () => {
             
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-600"></div>
+                <div className="w-full border-t border-gray-300"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-slate-800 text-slate-400">Or continue with</span>
+                <span className="px-4 bg-white text-gray-500">Or continue with</span>
               </div>
             </div>
             
             <Button
               onClick={handleGitHubLogin}
               variant="outline"
-              className="w-full border-slate-600 text-slate-300 hover:bg-slate-700 py-3"
+              className="w-full border-gray-300 text-gray-700 hover:bg-gray-50 h-11"
             >
-              <Github className="w-5 h-5 mr-2" />
+              <Github className="w-4 h-4 mr-2" />
               Continue with GitHub
             </Button>
             
-            <div className="text-center text-sm text-slate-400">
+            <div className="text-center text-sm text-gray-600">
               Don't have an account?{' '}
-              <a href="#" className="text-blue-400 hover:text-blue-300 font-medium">
+              <a href="#" className="text-gray-900 hover:text-gray-700 font-medium">
                 Sign up
               </a>
             </div>
             
             <div className="text-center">
-              <Link to="/app" className="text-sm text-slate-400 hover:text-white">
+              <Link to="/app" className="text-sm text-gray-600 hover:text-gray-900">
                 Continue as guest →
               </Link>
             </div>
